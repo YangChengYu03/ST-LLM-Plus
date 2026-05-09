@@ -1,0 +1,70 @@
+# ============================================================
+# ST-LLM+ few-shot experiments
+# ============================================================
+#
+# Usage:
+#   python run_ablation.py --config configs/fewshot_config.yaml
+#   python run_ablation.py --config configs/fewshot_config.yaml --only fewshot_10pct
+#
+# Notes:
+#   Each experiment trains the full ST-LLM+ model with a smaller train_ratio.
+#   Keep val_ratio fixed so the test split remains comparable.
+# ============================================================
+
+defaults:
+  epochs: 50
+  early_stop_patience: 10
+  batch_size: 16
+  lr: 0.0005
+  weight_decay: 0.0001
+  seed: 42
+  use_amp: true
+
+  npz_base_dir: "/kaggle/input/datasets/chengyy03/biyedatasets/data/ablation_study"
+  coords_csv_path: "/kaggle/input/datasets/chengyy03/nanchang-congest/roadsegid_location.csv"
+  results_base_dir: "./fewshot_results"
+
+  use_spatial_pe: true
+  use_pfga: true
+  use_temporal_conv: true
+  use_dual_graph: true
+
+  loss_alpha: 1.0
+  loss_beta: 0.0
+  loss_gamma1: 0.0
+  loss_gamma2: 0.0
+  loss_delta: 0.0
+  loss_epsilon: 0.0
+
+experiments:
+  fewshot_5pct:
+    enabled: true
+    batch: 1
+    npz_file: "full.npz"
+    train_ratio: 0.05
+    val_ratio: 0.10
+    description: "Few-shot ST-LLM+ with 5% training data"
+
+  fewshot_10pct:
+    enabled: true
+    batch: 1
+    npz_file: "full.npz"
+    train_ratio: 0.10
+    val_ratio: 0.10
+    description: "Few-shot ST-LLM+ with 10% training data"
+
+  fewshot_20pct:
+    enabled: true
+    batch: 1
+    npz_file: "full.npz"
+    train_ratio: 0.20
+    val_ratio: 0.10
+    description: "Few-shot ST-LLM+ with 20% training data"
+
+  full_70pct:
+    enabled: true
+    batch: 1
+    npz_file: "full.npz"
+    train_ratio: 0.70
+    val_ratio: 0.10
+    description: "Full-data ST-LLM+ reference with 70% training data"

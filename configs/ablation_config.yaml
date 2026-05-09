@@ -1,0 +1,155 @@
+# ============================================================
+# ST-LLM+ 消融实验配置文件
+# ============================================================
+#
+# 使用方式：
+#   python run_ablation.py                          # 运行所有 enabled=true 的实验
+#   python run_ablation.py --batch 1                # 只运行 batch 1
+#   python run_ablation.py --only feat_full         # 只运行指定实验
+#   python run_ablation.py --skip-completed         # 跳过已有结果的实验
+#
+# 实验分批建议：
+#   Batch 1 (~6h): feat_full + 5 个模块消融
+#   Batch 2 (~7h): 8 个特征实验 (含全特征基线)
+# ============================================================
+
+# 全局默认参数（所有实验共享，可被单个实验覆盖）
+defaults:
+  epochs: 50
+  early_stop_patience: 10
+  batch_size: 16
+  lr: 0.0005
+  weight_decay: 0.0001
+  seed: 42
+  use_amp: true
+
+  # 数据路径 (Kaggle)
+  npz_base_dir: "/kaggle/input/datasets/chengyy03/biyedatasets/data/ablation_study"
+  coords_csv_path: "/kaggle/input/datasets/chengyy03/nanchang-congest/roadsegid_location.csv"
+  results_base_dir: "./ablation_results"
+
+  # 模型默认配置（全部开启）
+  use_spatial_pe: true
+  use_pfga: true
+  use_temporal_conv: true
+  use_dual_graph: true
+
+  # 损失函数默认配置（仅 Huber，其余关闭）
+  loss_alpha: 1.0
+  loss_beta: 0.0
+  loss_gamma1: 0.0
+  loss_gamma2: 0.0
+  loss_delta: 0.0
+  loss_epsilon: 0.0
+
+# ============================================================
+# 实验定义
+# ============================================================
+# 每个实验仅指定与 defaults 不同的参数
+# enabled: 控制是否运行
+# batch: 分批编号，用 --batch N 选择运行哪一批
+# npz_file: 数据文件名（相对于 npz_base_dir）
+# description: 实验说明（写入结果文件，方便论文引用）
+
+experiments:
+
+  # ========================================
+  # Batch 1: 基准 + 模块消融 (~6 小时)
+  # ========================================
+
+  feat_full:
+    enabled: true
+    batch: 1
+    npz_file: "full.npz"
+    description: "Full model with all features (baseline)"
+
+  mod_no_spatial_pe:
+    enabled: true
+    batch: 1
+    npz_file: "full.npz"
+    use_spatial_pe: false
+    description: "w/o Spatial Position Encoding"
+
+  mod_no_pfga:
+    enabled: true
+    batch: 1
+    npz_file: "full.npz"
+    use_pfga: false
+    description: "w/o PFGA (Prior-knowledge Fused Graph Attention)"
+
+  mod_no_temporal_conv:
+    enabled: true
+    batch: 1
+    npz_file: "full.npz"
+    use_temporal_conv: false
+    description: "w/o Temporal Conv Encoder (replaced by Linear)"
+
+  mod_no_dual_graph:
+    enabled: true
+    batch: 1
+    npz_file: "full.npz"
+    use_dual_graph: false
+    description: "w/o Dual-Graph fusion (distance graph only)"
+
+  mod_full_loss:
+    enabled: true
+    batch: 1
+    npz_file: "full.npz"
+    loss_beta: 0.3
+    loss_gamma1: 0.05
+    loss_gamma2: 0.3
+    loss_delta: 0.5
+    loss_epsilon: 0.2
+    description: "w/ Full 6-component Loss (Huber+QR+TC+CP+VP+RC)"
+
+  # ========================================
+  # Batch 2: 特征消融 (~7 小时)
+  # ========================================
+
+  feat_full_b2:
+    enabled: true
+    batch: 2
+    npz_file: "full.npz"
+    description: "All features baseline for feature ablation batch"
+
+  feat_no_ntl:
+    enabled: true
+    batch: 2
+    npz_file: "no_ntl.npz"
+    description: "w/o NTL (Night-Time Light)"
+
+  feat_no_poi:
+    enabled: true
+    batch: 2
+    npz_file: "no_poi.npz"
+    description: "w/o POI (Point of Interest)"
+
+  feat_no_weather:
+    enabled: true
+    batch: 2
+    npz_file: "no_weather.npz"
+    description: "w/o Weather features"
+
+  feat_no_poi_ntl:
+    enabled: true
+    batch: 2
+    npz_file: "no_poi_ntl.npz"
+    description: "w/o POI + NTL"
+
+  feat_no_weather_ntl:
+    enabled: true
+    batch: 2
+    npz_file: "no_weather_ntl.npz"
+    description: "w/o Weather + NTL"
+
+  feat_no_weather_poi:
+    enabled: true
+    batch: 2
+    npz_file: "no_weather_poi.npz"
+    description: "w/o Weather + POI"
+
+  feat_no_poi_weather_ntl:
+    enabled: true
+    batch: 2
+    npz_file: "no_poi_weather_ntl.npz"
+    description: "w/o POI + Weather + NTL (congestion index only)"

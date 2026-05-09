@@ -1,0 +1,42 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Training outputs
+checkpoints/
+adj_data/
+ablation_results/
+baseline_results/
+fewshot_results/
+stllm_plus_comparison_results/
+recomputed_test_metrics/
+recomputed_feature_test_metrics/
+recomputed_module_test_metrics/
+
+# Model weights and large arrays
+*.pt
+*.pth
+*.ckpt
+*.npy
+*.npz
+
+# Logs and generated reports
+*.log
+train_history.csv
+train_history.json
+loss_curve.png
+
+# Notebook/runtime clutter
+.ipynb_checkpoints/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,51 @@
+# ============================================================
+# Classic baseline comparison config
+# ============================================================
+
+defaults:
+  epochs: 50
+  early_stop_patience: 10
+  batch_size: 16
+  lr: 0.001
+  weight_decay: 0.0001
+  seed: 42
+  use_amp: true
+
+  npz_base_dir: "/kaggle/input/datasets/chengyy03/biyedatasets/data/ablation_study"
+  coords_csv_path: "/kaggle/input/datasets/chengyy03/nanchang-congest/roadsegid_location.csv"
+  results_base_dir: "./baseline_results"
+
+  baseline_hidden_dim: 64
+  baseline_dropout: 0.1
+  baseline_num_heads: 4
+  baseline_kernel_size: 3
+  baseline_node_embed_dim: 16
+
+  loss_alpha: 1.0
+  loss_beta: 0.0
+  loss_gamma1: 0.0
+  loss_gamma2: 0.0
+  loss_delta: 0.0
+  loss_epsilon: 0.0
+
+experiments:
+  sgtcn:
+    enabled: true
+    batch: 1
+    model: "sgtcn"
+    npz_file: "full.npz"
+    description: "SGTCN classic spatio-temporal graph temporal convolution baseline"
+
+  astgcn:
+    enabled: true
+    batch: 1
+    model: "astgcn"
+    npz_file: "full.npz"
+    description: "ASTGCN attention-based spatio-temporal graph convolution baseline"
+
+  agcrn:
+    enabled: true
+    batch: 1
+    model: "agcrn"
+    npz_file: "full.npz"
+    description: "AGCRN adaptive graph convolution recurrent baseline"

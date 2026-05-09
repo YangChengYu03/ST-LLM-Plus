@@ -1,0 +1,63 @@
+# ============================================================
+# Original ST-LLM+ vs improved ST-LLM+ comparison
+# ============================================================
+#
+# This config keeps the existing project training/evaluation pipeline:
+#   python run_ablation.py --config configs/stllm_plus_comparison_config.yaml
+#
+# Experimental definition:
+# - original_stllm_plus:
+#     Original-style ST-LLM+ reproduction under this project framework.
+#     It keeps 1D temporal convolution, PFGA, GPT-2+LoRA, and graph mask,
+#     but removes the added multi-source features, learnable spatial PE,
+#     and dual graph semantic fusion.
+# - improved_stllm_plus:
+#     The full model used in this thesis, with all multi-source features
+#     and structural extensions enabled.
+# ============================================================
+
+defaults:
+  epochs: 50
+  early_stop_patience: 10
+  batch_size: 16
+  lr: 0.0005
+  weight_decay: 0.0001
+  seed: 42
+  use_amp: true
+
+  npz_base_dir: "/kaggle/input/datasets/chengyy03/biyedatasets/data/ablation_study"
+  coords_csv_path: "/kaggle/input/datasets/chengyy03/nanchang-congest/roadsegid_location.csv"
+  results_base_dir: "./stllm_plus_comparison_results"
+
+  use_spatial_pe: true
+  use_pfga: true
+  use_temporal_conv: true
+  use_dual_graph: true
+
+  loss_alpha: 1.0
+  loss_beta: 0.0
+  loss_gamma1: 0.0
+  loss_gamma2: 0.0
+  loss_delta: 0.0
+  loss_epsilon: 0.0
+
+experiments:
+  original_stllm_plus:
+    enabled: true
+    batch: 1
+    npz_file: "no_poi_weather_ntl.npz"
+    use_spatial_pe: false
+    use_pfga: true
+    use_temporal_conv: true
+    use_dual_graph: false
+    description: "Original-style ST-LLM+ reproduction: traffic series + distance graph + PFGA + GPT-2/LoRA"
+
+  improved_stllm_plus:
+    enabled: true
+    batch: 1
+    npz_file: "full.npz"
+    use_spatial_pe: true
+    use_pfga: true
+    use_temporal_conv: true
+    use_dual_graph: true
+    description: "Improved ST-LLM+ with multi-source features, spatial PE, and dual-graph fusion"
